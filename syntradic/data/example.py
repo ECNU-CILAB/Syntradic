@@ -11,7 +11,7 @@ class RandomData:
 
     def generate_random_data(self):
         data = pd.DataFrame()
-        for column_name in ["open_price", "high_price", "low_price", "close_price", "vwap", "money", "volume"]:
+        for column_name in ['trade_date','stock_code','stock_name','volume','topen','tclose','turnover_rate','high','low']:
             values = np.random.uniform(5, 10, 240)
             data[column_name] = values
         return data

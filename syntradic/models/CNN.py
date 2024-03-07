@@ -1,4 +1,4 @@
-lass SimpleCNN(nn.Module):
+class SimpleCNN(nn.Module):
     def __init__(self):
         super(SimpleCNN, self).__init__()
         # 第一个卷积层

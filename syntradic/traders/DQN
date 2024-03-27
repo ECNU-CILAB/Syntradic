@@ -9,18 +9,7 @@ import numpy as np
 
 
 class DecisionMakerDQN():
-    '''The decision maker of DQN.
     
-    Args:
-        head_mask (int): ``head_mask``.
-        tail_mask (int): ``tail_mask``.
-        epsilon (float): The probability that the agent chooses actions randomly.
-        device (torch.device): The computing device.
-
-    Attributes:
-        epsilon (float): The probability that the agent chooses actions randomly. We recommend setting it to 1 initially and then decreasing it to 0.01.
-        training (bool): If ``training=True``, ``model.train()`` will be called and epsilon-greedy strategy will be enabled. If ``training=False``, ``model.eval()`` will be called and epsilon-greedy strategy will be disabled.
-    '''
     def __init__(self, head_mask, tail_mask, epsilon=0.01, device=torch.device("cuda")):
         self.epsilon = epsilon
         self.head_mask = head_mask
@@ -29,13 +18,8 @@ class DecisionMakerDQN():
         self.device = device
 
     def get_model_output(self, model, input_data, action_data):
-        '''Get the raw output of a model.
-    
-        Args:
-            model (torch.nn.Module): The neural network model.
-            input_data (torch.tensor): A batch of sequencial environment states. The shape is ``(batch_size, sequence_length, input_size)``.
-            action_data (torch.tensor): A batch of sequencial actions. The shape is ``(batch_size, sequence_length)``. This tensor is generated in trainer.
-        '''
+
+
         if self.training:
             model.train()
         else:
@@ -63,15 +47,7 @@ class DecisionMakerDQN():
         return q_value_data
 
     def __call__(self, model, input_data):
-        '''Get the decisions of a model.
-    
-        Args:
-            model (torch.nn.Module): The neural network model.
-            input_data (torch.tensor): A batch of sequencial environment states. The shape is ``(batch_size, sequence_length, input_size)``.
-
-        Returns:
-            signal_series (torch.tensor): A batch of sequencial actions.
-        '''
+       
         model.eval()
         if len(input_data.shape) == 2:
             input_data = input_data.reshape(
@@ -113,22 +89,7 @@ class DecisionMakerDQN():
 
 
 class TrainerDQN():
-    '''The trainer of DQN.
-    
-    Args:
-        head_mask (int): ``head_mask``.
-        tail_mask (int): ``tail_mask``.
-        buy_cost_pct (float): The cost ratio when the agent chooses to buy. 费率
-        sell_cost_pct (float): The cost ratio when the agent chooses to sell.
-        gamma (float): The discount factor in the reward value function. 折扣
-        huber_loss_delta (float): The delta value in huber loss function.
-        clamp_bound (float): The upper bound on the absolute value of the gradients.
-        target_tao (float): The coefficient for target model updating.
-        device (torch.device): The computing device.
 
-    Attributes:
-        difficulty (float): ``difficulty``.
-    '''
 
     def __init__(
         self,
@@ -208,18 +169,7 @@ class TrainerDQN():
         model_target.load_state_dict(target_dict)
 
     def train_epoch(self, model, data_loader, optimizer, **kwargs):
-        '''Train the model for an epoch.
-    
-        Args:
-            model (torch.nn.Module): The neural network model.
-            data_loader (torch.utils.data.DataLoader): The data loader which contains the ``train`` dataset.
-            optimizer (torch.optim.Adam): The optimizer provided by PyTorch.
-            decision_maker (DecisionMakerDQN): The decision maker that chooses actions according to the model\'s output.
-            model_target (torch.nn.Module): The target model in DQN.
 
-        Returns:
-            sum_loss, sum_reward (float, float): The average loss and reward of each sequence in the data loader.
-        '''
         decision_maker = kwargs["decision_maker"]
         model_target = kwargs["model_target"]
         model.train()
@@ -249,17 +199,7 @@ class TrainerDQN():
         return sum_loss, sum_reward
 
     def test_epoch(self, model, data_loader, **kwargs):
-        '''Test the model for an epoch.
-    
-        Args:
-            model (torch.nn.Module): The neural network model.
-            data_loader (torch.utils.data.DataLoader): The data loader which contains the ``dev (or test)`` dataset.
-            decision_maker (DecisionMakerDQN): The decision maker that chooses actions according to the model\'s output.
-            model_target (torch.nn.Module): The target model in DQN.
-
-        Returns:
-            sum_loss, sum_reward (float, float): The average loss and reward of each sequence in the data loader.
-        '''
+       
         decision_maker = kwargs["decision_maker"]
         model_target = kwargs["model_target"]
         model.eval()
